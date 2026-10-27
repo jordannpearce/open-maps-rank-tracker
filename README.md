@@ -4,7 +4,7 @@ Standalone, domain-ready version of the Rank Checker built for the Pearce Studio
 
 ## What it does
 1. Visitor enters their **own DataForSEO API login + password** (per-request only, never stored or logged) and can test the connection.
-2. Searches for their business by name + city + state, clicks their exact listing — the grid centers on the business itself, not the city center.
+2. Searches for their business by name + city + state, clicks their exact listing — the OpenStreetMap map immediately shows (in its own visible preview section, never inside a hidden container) with the grid **pre-loaded**: a ★ marker on the business and blue dots on every point that will be checked, using the same grid math as the scan. Changing grid size or spacing updates the preview instantly. The grid centers on the business itself, not the city center.
 3. Runs a geo-grid scan for a keyword: **3×3 to 13×13**, spacing **0.5 / 1 / 2 / 3 / 5 / 10 miles**.
 
 ## Scan rules (carried over exactly from the Pearce checker)
