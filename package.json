@@ -1,0 +1,1 @@
+{"description":"Standalone Google Maps geo-grid rank tracker (BYO DataForSEO key) — same engine as the Pearce Studios Rank Checker.","engines":{"node":">=18"},"name":"google-maps-rank-tracker-standalone","private":true,"scripts":{"start":"node server.js"},"type":"commonjs","version":"1.0.0"}

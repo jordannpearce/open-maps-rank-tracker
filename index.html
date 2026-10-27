@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Google Maps Grid Rank Tracker — See Where You Rank Everywhere</title>
+<meta name="description" content="Free Google Maps grid rank tracker. Bring your own DataForSEO key, find your business, and see your exact Maps ranking at 9 to 169 points around your location.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--bg:#0b1220;--card:#111c33;--card2:#0f1830;--line:#22345e;--text:#eef2ff;--muted:#a8b3cf;--accent:#22c55e;--accent2:#38bdf8;--amber:#f59e0b;--orange:#f97316;--grey:#64748b;--red:#ef4444}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+a{color:var(--accent2)} .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{padding:18px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:20px}.logo span{color:var(--accent)}
+.hero{padding:44px 0 10px;text-align:center}.hero h1{font-size:42px;line-height:1.05;margin:0 0 14px}.hero p{color:var(--muted);font-size:18px;max-width:760px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:22px 0}
+.card h2{margin:0 0 6px;font-size:22px}.sub{color:var(--muted);margin:0 0 16px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}input,select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}.hero h1{font-size:32px}}
+.btn{display:inline-block;background:var(--accent);color:#04120a;border:0;padding:13px 20px;border-radius:11px;font-weight:800;cursor:pointer;font-size:16px}.btn.secondary{background:#1e2b4a;color:var(--text);border:1px solid var(--line)}.btn:disabled{opacity:.55;cursor:wait}
+.msg{margin-top:12px;padding:12px;border-radius:10px;display:none}.msg.err{display:block;background:#3b1220;color:#fecdd3;border:1px solid #7f1d2e}.msg.ok{display:block;background:#052e1b;color:#bbf7d0;border:1px solid #14532d}
+.listing{border:1px solid var(--line);border-radius:12px;padding:14px;margin:10px 0;cursor:pointer;background:var(--card2)}.listing:hover,.listing.sel{border-color:var(--accent)} .listing b{font-size:17px}
+#map{height:520px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#ddd}
+.pin{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.4)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}}
+.stat{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}.stat b{font-size:28px;display:block}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.progress{height:10px;background:#1e2b4a;border-radius:99px;overflow:hidden;display:none;margin-top:14px}.progress i{display:block;height:100%;width:40%;background:var(--accent);animation:slide 1.1s infinite alternate}@keyframes slide{from{transform:translateX(-40%)}to{transform:translateX(220%)}}
+footer{padding:28px 0 40px;color:var(--muted);text-align:center}.fine{font-size:13px;color:var(--muted)}
+.cta{background:#052e1b;border:1px solid #14532d;border-radius:14px;padding:18px;text-align:center;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="logo">Maps Grid <span>Rank Tracker</span></div><div><a href="#checker">Check My Rankings</a></div></header>
+<section class="hero">
+<h1>See where you rank on Google Maps — everywhere, not just at your front door.</h1>
+<p>Run a geo-grid scan around your business for any keyword. Check 9 to 169 points, see exactly where you're in the top 3, where you're buried, and where you don't show up at all.</p>
+</section>
+
+<main id="checker">
+<section class="card">
+<h2>Step 1 — Your DataForSEO key</h2>
+<p class="sub">This tool runs on <strong>your own</strong> DataForSEO API credentials. They're sent per-request only — never stored, never logged. Don't have one? <a href="https://dataforseo.com" target="_blank" rel="noopener">Get a free DataForSEO account</a>, then grab your API login + password from API Access.</p>
+<div class="grid2"><div><label>DataForSEO API login (email)</label><input id="login" type="email" autocomplete="off" placeholder="you@example.com"></div>
+<div><label>DataForSEO API password</label><input id="password" type="password" autocomplete="off" placeholder="Your API password"></div></div>
+<p style="margin-top:16px"><button class="btn secondary" id="testBtn">Test connection</button></p>
+<div class="msg" id="testMsg"></div>
+</section>
+
+<section class="card">
+<h2>Step 2 — Find your business</h2>
+<p class="sub">Use the exact business name as it appears on your Google Business Profile, plus its city and state.</p>
+<div class="grid3"><div><label>Business name</label><input id="business" placeholder="Acme Plumbing"></div>
+<div><label>City</label><input id="city" placeholder="Hayward"></div>
+<div><label>State</label><input id="state" placeholder="CA"></div></div>
+<p style="margin-top:16px"><button class="btn" id="searchBtn">Find my business</button></p>
+<div class="progress" id="searchProg"><i></i></div><div class="msg" id="searchMsg"></div>
+<div id="results"></div>
+</section>
+
+<section class="card">
+<h2>Step 3 — Run your grid scan</h2>
+<p class="sub" id="selectedLine">Pick your listing above first — then enter the keyword customers actually search for.</p>
+<div class="grid3"><div><label>Keyword</label><input id="keyword" placeholder="plumber near me"></div>
+<div><label>Grid size</label><select id="gridSize"><option value="3">3 × 3 (9 points)</option><option value="5" selected>5 × 5 (25 points)</option><option value="7">7 × 7 (49 points)</option><option value="9">9 × 9 (81 points)</option><option value="13">13 × 13 (169 points)</option></select></div>
+<div><label>Point spacing</label><select id="spacing"><option value="0.5">0.5 miles</option><option value="1" selected>1 mile</option><option value="2">2 miles</option><option value="3">3 miles</option><option value="5">5 miles</option><option value="10">10 miles</option></select></div></div>
+<p class="fine" id="costNote"></p>
+<p style="margin-top:8px"><button class="btn" id="scanBtn" disabled>Run grid scan</button></p>
+<div class="progress" id="scanProg"><i></i></div><div class="msg" id="scanMsg"></div>
+</section>
+
+<section class="card" id="resultsCard" style="display:none">
+<h2>Your rankings</h2><p class="sub" id="summaryLine"></p>
+<div class="stats" id="stats"></div>
+<div id="map" style="margin-top:18px"></div>
+<p class="fine">Green = top 3 &nbsp;•&nbsp; Amber = 4–10 &nbsp;•&nbsp; Orange = 11–20 &nbsp;•&nbsp; Grey = not found in the top results at that point. Click any pin for details.</p>
+<div style="overflow:auto"><table><thead><tr><th>#</th><th>Rank</th><th>Listings checked</th><th>Matched by</th><th>Top results at that point</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div class="cta" id="cta"><h3 style="margin-top:0">Not ranking where you should be?</h3><p>We help local businesses rank higher on Google Maps and Google AI.</p><p><a class="btn" href="tel:+15106190213">Call 510-619-0213</a></p></div>
+</section>
+</main>
+<footer>Your DataForSEO credentials are never stored. Scans run one point at a time at depth 100 (retry at 20) for accurate results.<br>Map data © OpenStreetMap contributors.</footer>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+let selected=null, map=null, layer=null;
+const $=id=>document.getElementById(id);
+function creds(){return{login:$('login').value.trim(),password:$('password').value}}
+function show(id,txt,ok){const e=$(id);e.textContent=txt;e.className='msg '+(ok?'ok':'err')}
+async function post(path,body){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return r.json()}
+function updateCost(){const n=+$('gridSize').value;$('costNote').textContent='This scan will check '+(n*n)+' points on your DataForSEO account — one live request per point.'} $('gridSize').addEventListener('change',updateCost);updateCost();
+$('testBtn').onclick=async()=>{const c=creds();if(!c.login||!c.password)return show('testMsg','Enter your DataForSEO login and password first.',false);$('testBtn').disabled=true;try{const d=await post('/api/rank/test',c);show('testMsg',d.ok?'Connected — those credentials work.':(d.error||'Connection failed.'),d.ok)}catch(e){show('testMsg','Could not reach the server: '+e.message,false)}finally{$('testBtn').disabled=false}};
+$('searchBtn').onclick=async()=>{const c=creds();$('searchProg').style.display='block';$('searchBtn').disabled=true;$('results').innerHTML='';try{const d=await post('/api/rank/search',{...c,business:$('business').value,city:$('city').value,state:$('state').value});if(!d.ok)return show('searchMsg',d.error||'Search failed.',false);show('searchMsg','Found '+d.results.length+' listing(s). Click yours below.',true);d.results.forEach((r,i)=>{const div=document.createElement('div');div.className='listing';div.innerHTML='<b></b><br><span></span>';div.querySelector('b').textContent=r.title;div.querySelector('span').textContent=[r.address,r.category,r.rating?('★ '+r.rating+' ('+(r.ratingCount||0)+' reviews)'):''].filter(Boolean).join(' • ');div.onclick=()=>{document.querySelectorAll('.listing').forEach(x=>x.classList.remove('sel'));div.classList.add('sel');selected=r;$('selectedLine').textContent='Selected: '+r.title+(r.address?' — '+r.address:'');$('scanBtn').disabled=false;initMap(r)};$('results').appendChild(div)})}catch(e){show('searchMsg','Search failed: '+e.message,false)}finally{$('searchProg').style.display='none';$('searchBtn').disabled=false}};
+function pinIcon(rank){const bg=rank==null?'#64748b':rank<=3?'#22c55e':rank<=10?'#f59e0b':rank<=20?'#f97316':'#64748b';const txt=rank==null?'—':rank;return L.divIcon({className:'',html:'<div class="pin" style="background:'+bg+'">'+txt+'</div>',iconSize:[30,30],iconAnchor:[15,15]})}
+function initMap(r){if(!isFinite(r.lat)||!isFinite(r.lng))return;if(!map){map=L.map('map');L.tileLayer('/tiles/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);layer=L.layerGroup().addTo(map)}layer.clearLayers();map.setView([r.lat,r.lng],13);L.marker([r.lat,r.lng]).addTo(layer).bindPopup('<b>'+r.title+'</b>').openPopup();setTimeout(()=>map.invalidateSize(),50)}
+$('scanBtn').onclick=async()=>{if(!selected)return;const kw=$('keyword').value.trim();if(!kw)return show('scanMsg','Enter a keyword first.',false);$('scanProg').style.display='block';$('scanBtn').disabled=true;try{const d=await post('/api/rank/scan',{...creds(),keyword:kw,business:selected,gridSize:+$('gridSize').value,spacingMiles:+$('spacing').value});if(!d.ok)return show('scanMsg',d.error||'Scan failed.',false);show('scanMsg','Scan complete.',true);render(d)}catch(e){show('scanMsg','Scan failed: '+e.message,false)}finally{$('scanProg').style.display='none';$('scanBtn').disabled=false}};
+function render(d){$('resultsCard').style.display='block';const s=d.summary;$('summaryLine').textContent='Found at '+s.found+' of '+s.total+' points for "'+$('keyword').value.trim()+'".';$('stats').innerHTML=[['Average rank',s.avgRank??'—'],['Best rank',s.best??'—'],['In top 3',s.top3Pct+'%'],['In top 10',s.top10Pct+'%']].map(x=>'<div class="stat"><b>'+x[1]+'</b>'+x[0]+'</div>').join('');initMap(selected);if(map&&layer){d.points.forEach(p=>{const m=L.marker([p.lat,p.lng],{icon:pinIcon(p.found?p.rank:null)}).addTo(layer);m.bindPopup(p.error?('Error: '+p.error):p.found?('<b>Rank #'+p.rank+'</b><br>Checked '+(p.itemsCount??'—')+' listings<br>Matched by: '+(p.matchedBy||'—')):('<b>Not found</b><br>Checked '+(p.itemsCount??'—')+' listings'))});const b=L.latLngBounds(d.points.map(p=>[p.lat,p.lng]));map.fitBounds(b.pad(0.08))}$('rows').innerHTML=d.points.map((p,i)=>'<tr><td>'+(i+1)+'</td><td>'+(p.error?('Error'):p.found?('#'+p.rank):'Not found')+'</td><td>'+(p.itemsCount??'—')+'</td><td>'+(p.matchedBy||'—')+'</td><td>'+(p.topTitles||[]).join(' • ')+'</td></tr>').join('');$('cta').style.display='block';$('resultsCard').scrollIntoView({behavior:'smooth'})}
+</script>
+</body></html>
