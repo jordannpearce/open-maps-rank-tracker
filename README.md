@@ -13,7 +13,7 @@ Standalone, domain-ready version of the Rank Checker built for the Pearce Studio
 - Matching is three-way, in order: **place_id → coordinates within 0.002° → loose name match** (legal suffixes stripped). Each point reports how it matched and how many listings were checked.
 - A failed point shows its real error — never a fake "not found." If every point fails (e.g. bad credentials), the whole scan fails with that error.
 - Map tiles: OpenStreetMap only, served through the site's own `/tiles/{z}/{x}/{y}.png` proxy with an identifying User-Agent and in-memory cache. **No CARTO.**
-- No lead capture. After results, a "Call 510-619-0213" help CTA (change the number in `index.html` if this brand differs).
+- No lead capture. After results, a help CTA: "Not ranking where you should be? We help local businesses rank higher on Google Maps and Google AI. Send Email to agency@info.jordanpearce.com and we will help connect you to a reputable Local SEO Agency." (email is a mailto link/button — no phone CTA on this standalone site, per Nelson 2026-10-27).
 
 ## Run locally
 ```bash
